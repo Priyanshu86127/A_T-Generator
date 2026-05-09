@@ -4,9 +4,18 @@ import whisper
 import tempfile
 import os
 
-st.set_page_config(page_title="Audio To Text")
+st.set_page_config(
+    page_title="Audio To Text",
+    layout="centered"
+)
 
 st.title("Audio to Text")
+
+selected_language = st.selectbox(
+    "Select Language",
+    ["en", "hi"],
+    format_func=lambda x: "English" if x == "en" else "Hindi"
+)
 
 @st.cache_resource
 def load_whisper():
@@ -14,17 +23,19 @@ def load_whisper():
 
 model = load_whisper()
 
-tab1, tab2 = st.tabs(["Upload Audio", "Live Recording"])
+tab1, tab2 = st.tabs([
+    "Upload Audio",
+    "Live Recording"
+])
 
 with tab1:
-
 
     uploaded_file = st.file_uploader(
         "Upload Audio File",
         type=["mp3", "wav", "m4a"]
     )
 
-    if uploaded_file:
+    if uploaded_file is not None:
 
         st.audio(uploaded_file)
 
@@ -38,14 +49,19 @@ with tab1:
 
         with st.spinner("Converting speech to text..."):
 
-            result = model.transcribe(temp_path)
+            result = model.transcribe(
+                temp_path,
+                language=selected_language
+            )
+
+            text = result["text"]
 
         st.subheader("Transcript")
-        st.write(result["text"])
+        st.write(text)
 
         st.download_button(
             "Download Transcript",
-            result["text"],
+            text,
             file_name="transcript.txt"
         )
 
@@ -66,7 +82,10 @@ with tab2:
 
         audio_bytes = audio["bytes"]
 
-        st.audio(audio_bytes, format="audio/wav")
+        st.audio(
+            audio_bytes,
+            format="audio/wav"
+        )
 
         with tempfile.NamedTemporaryFile(
             delete=False,
@@ -78,14 +97,19 @@ with tab2:
 
         with st.spinner("Transcribing live audio..."):
 
-            result = model.transcribe(temp_path)
+            result = model.transcribe(
+                temp_path,
+                language=selected_language
+            )
+
+            text = result["text"]
 
         st.subheader("Transcript")
-        st.write(result["text"])
+        st.write(text)
 
         st.download_button(
             "Download Transcript",
-            result["text"],
+            text,
             file_name="live_transcript.txt"
         )
 
