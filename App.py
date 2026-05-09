@@ -11,12 +11,6 @@ st.set_page_config(
 
 st.title("Audio to Text")
 
-selected_language = st.selectbox(
-    "Select Language",
-    ["en"],
-    format_func=lambda x: "English" if x == "en" 
-)
-
 @st.cache_resource
 def load_whisper():
     return whisper.load_model("base")
@@ -51,7 +45,7 @@ with tab1:
 
             result = model.transcribe(
                 temp_path,
-                language=selected_language
+                language="en"
             )
 
             text = result["text"]
@@ -69,7 +63,7 @@ with tab1:
 
 with tab2:
 
-    st.write("Record using microphone")
+    st.write("Record Audio")
 
     audio = mic_recorder(
         start_prompt="Start Recording",
@@ -99,7 +93,7 @@ with tab2:
 
             result = model.transcribe(
                 temp_path,
-                language=selected_language
+                language="en"
             )
 
             text = result["text"]
