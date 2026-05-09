@@ -13,8 +13,8 @@ st.title("Audio to Text")
 
 selected_language = st.selectbox(
     "Select Language",
-    ["en", "hi"],
-    format_func=lambda x: "English" if x == "en" else "Hindi"
+    ["en"],
+    format_func=lambda x: "English" if x == "en" 
 )
 
 @st.cache_resource
